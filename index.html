@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SEaDIP UFPR - SPA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --main-blue: #0b3570;
+            --light-blue: #f6f9fe;
+            --dark-blue: #072455;
+            --button-bg: #18386e;
+            --white: #fff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Open Sans', sans-serif; background: var(--light-blue); color: var(--main-blue);}
+        .header-top {
+             display: flex; align-items: center; justify-content: flex-start;
+            padding: 12px 0 8px 30px; border-bottom: 2px solid #f4f4f4;
+        }
+        .header-top img { width: 70px; margin-right: 24px;}
+        .nav { flex-grow: 1; display: flex; align-items: center; font-size: 13px;}
+        .nav a, .nav-link {
+            color: var(--main-blue); text-decoration: none; margin-right: 20px;
+            transition: opacity .2s; font-weight: 400; cursor: pointer;
+        }
+        .nav a:last-child, .nav-link:last-child { margin-right: 0;}
+        .nav .selected, .nav-link.selected {font-weight: 700; text-decoration: underline;}
+        .btn-contact {
+            background: var(--button-bg); padding: 7px 22px; color: var(--white);
+            border-radius: 28px; font-size: 15px; font-weight: 700; border: none;
+            margin-left: auto; margin-right: 25px; cursor: pointer;
+        }
+        /* Barra de trilha e naveg breadcrumb */
+        .breadcrumb {
+            background: #f6f9fe; padding: 0 3vw;
+            font-size: 13px; display: flex; align-items: center;gap:6px;
+            margin-top: 2px; margin-bottom: 16px; height: 38px; margin-left: 70px;
+        }
+        .breadcrumb a, .breadcrumb span {
+            color: #617096; text-decoration: none;font-weight: 600; cursor: pointer;
+        }
+        .breadcrumb .bc-home { width:19px; margin: 0 9px -3px 0;}
+        /* Hero (apenas home)*/
+        .hero {background: var(--main-blue); color: var(--white); text-align: center; position: relative;
+            padding-top: 30px; padding-bottom: 70px; overflow: hidden;
+      border-bottom-left-radius: 2000px 300px;
+      border-bottom-right-radius: 2000px 300px;
+      position: relative;}
+
+        .hero::after {
+            content: ''; display: block; position: absolute; bottom: -1px; left: 0;
+            width: 100%; height: 110px; background: var(--main-blue);
+            border-bottom-left-radius: 999vw 80px; border-bottom-right-radius: 999vw 80px; z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 2;}
+        .hero-title { font-size: 64px; font-weight: 800; margin-bottom: 0; letter-spacing: 2px;line-height:1.08;}
+        .hero-desc { font-size: 23px; font-weight: 400; margin-bottom: 18px; margin-top: 14px; line-height: 1.25;}
+        .grid-boxes {
+            margin-top: 44px; display: flex; justify-content: center; gap: 44px; z-index: 2; position: relative;
+        }
+        .box {
+            background: var(--white); border-radius: 24px; width: 210px; height: 182px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px #6874ad1a; transition: box-shadow 0.2s, transform 0.2s; cursor: pointer;
+        }
+        .box:hover { box-shadow: 0 20px 36px #3a469125; transform: translateY(-5px) scale(1.02);}
+        .box img, .box svg { width: 76px; height: 76px; margin-bottom: 10px;}
+        .box label { font-weight: 700; font-size: 22px; color: var(--main-blue); margin-top: 4px; cursor: pointer;}
+        .box .moodle { font-size: 32px; font-weight: 900; color: #222 !important; text-transform: lowercase; font-family: Verdana, Arial, Helvetica, sans-serif; margin-bottom: -10px;}
+        /* botão flutuante up */
+        .go-top {
+            position: fixed; right: 45px; bottom: 24px; width: 46px; height: 46px; border-radius: 50%;
+            background: var(--main-blue); display: flex; align-items: center; justify-content: center;
+            z-index: 99; cursor: pointer; border: none; box-shadow: 0 2px 12px #071b4e45; transition: background .2s; opacity:0.93;
+        }
+        .go-top svg { fill: #fff; width: 22px; height: 22px;}
+        /* Sidebar Acessibilidade */
+        .sidebar-icons {
+            position: fixed; right: 25px; top: 43%; display: flex; flex-direction: column;
+            gap: 17px; z-index: 88;
+        }
+        .sidebar-icons button {
+            background: var(--main-blue); border: none; width: 42px; height: 42px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .sidebar-icons img, .sidebar-icons svg { width: 22px; height: 22px; filter: brightness(6) invert(1);}
+        /* Main: notícias/faq */
+        .main-content { display: flex; gap: 60px; justify-content: center; padding: 36px 8vw 32px 8vw; margin-top: 8vh;}
+        .noticias, .faq { flex: 1;}
+        .noticias-title, .faq-title, .faq h3, .faq h4 { color: var(--main-blue); font-weight: 800;}
+        .noticias-title, .faq-title { font-size: 25px; margin-bottom: 20px;}
+        .noticias-list { margin-top: 0; display: flex; flex-direction: column; gap: 26px;}
+        .noticia h4 { font-size: 16px; margin-bottom: 2px;}
+        .noticia p { margin-bottom: 8px; color: #222c; font-size: 13.5px;}
+        .btn-read {
+            display: inline-block; padding: 6px 18px 6px 15px;
+            border-radius: 6px; background: var(--main-blue); color: var(--white);
+            font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: background-color .2s;
+            text-align: left; margin-top: 5px;
+        }
+        .btn-read svg { width: 12px; height: 12px; margin-left: 8px; vertical-align: middle;}
+        .faq { padding-left: 24px; border-left: 2px solid #d2e0fa;}
+        .faq-item { margin-bottom: 17px;}
+        .faq-question { font-size: 16px; font-weight: 700; margin-bottom: 2px; color: var(--main-blue);}
+        .faq-answer { color: #222c; font-size: 13.5px;}
+        .faq-btns {margin-top: 17px; display: flex; gap: 13px;}
+        .btn-manual {
+            background: var(--main-blue); color: var(--white); padding: 8px 19px; font-size: 13.7px; font-weight: 600;
+            border: none; border-radius: 5px; cursor: pointer; transition: background .2s;
+        }
+        /* Seção Conheça o sitio */
+        .site-section {background: var(--main-blue); color: var(--white); padding: 28px;
+            font-size: 22px; font-weight: 700; letter-spacing: 0.5px;}
+        .site-section .icon { float: right; line-height: 1.2;}
+        .section-feature { padding: 30px 0 0 0; background: var(--white);}
+        .video-box { width: 100vw; max-width: 100vw; height: 374px; background: linear-gradient(0deg, #0b3570bb 0%, #113a725b 81%);
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+        .video-box img { width: 100vw; height: 374px; object-fit: cover; opacity: 0.6; filter: brightness(0.7) blur(0.4px);}
+        .play-btn {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            width: 90px; height: 90px; background: #fff; opacity: 0.92; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; z-index: 3; cursor: pointer;
+            box-shadow: 0px 6px 28px #23487e48; transition: background-color 0.15s;
+        }
+        .play-btn:hover {background: #fffa;}
+        .play-btn svg { width: 46px; height: 46px; fill: var(--main-blue);}
+        /* Rodapé */
+    footer {
+      background: var(--dark-blue);
+      color: #ffffff;
+      padding: 44px 0 12px 0;
+      margin-top: 0;
+    }
+    .footer-content {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 40px;
+      justify-content: space-between;
+    }
+    .footer-desc {
+      flex: 2;
+      font-size: .97rem;
+      opacity: 0.92;
+      margin-right: 20px;
+    }
+    .footer-social {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .footer-social img {
+      height: 80%;
+      filter: brightness(0) invert(1);
+    }
+    .footer-contacts {
+      flex: 1.5;
+    }
+    .footer-contacts .contato-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+    }
+    .footer-contacts .contato-list {
+      list-style: none;
+      margin: 0; padding: 0;
+      font-size: .99rem;
+    }
+    .footer-contacts .contato-list li {
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-infos {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: .97rem;
+      opacity: 0.88;
+    }
+    .footer-info-access {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .footer-info-access img { height: 100%; }
+    .footer-logo-brasil img { height: 100%; }
+
+    .footer-copy {
+      flex: 1;
+      text-align: center;
+      margin-top: 19px;
+      font-size: .96rem;
+      opacity: 0.84;
+      color: #d6daf6;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer-logo-brasil {
+      height: 40px;
+    }
+    @media (max-width: 800px) {
+      .header-top, .container, .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+      }
+
+      
+      .sidebar-access { top: 15px; right: 13px; position: static; flex-direction: row; gap: 8px; }
+    }
+        /* Páginas internas */
+        .main-pg { background: var(--light-blue); min-height: 70vh; }
+        .manual-title, .editor-title, .dev-title, .contato-title {font-size: 28px; font-weight: 800; color:var(--white);}
+        .subtitle-center {text-align: center;font-size:2.1em;font-weight:800;margin:30px 0 32px 0;}
+        .telas-row {display:flex; align-items: flex-start; margin-bottom:36px; gap:33px; margin-top:28px;}
+        .telas-row .tela-img, .tela-thumb { box-shadow: 0 5px 27px #071b4e13; border-radius: 13px;overflow: hidden;}
+        .telas-row .tela-img { width:330px;}
+        .telas-row .tela-thumb { width:175px;}
+        .telas-row .side {flex:1;}
+        .manual-descr { font-size: 16px; color: #414b65; margin-bottom:10px;}
+        /* Editais page */
+        .editor-section {padding-bottom:40px;}
+        .editor-bar {display:flex; justify-content: flex-end;}
+        .editor-search {background:#f7f9fd;border:1.3px solid #dde6f6; border-radius: 12px; padding: 7px 15px; display:flex;align-items:center; width:304px;font-size:15.7px;margin:10px 0;}
+        .editor-search input {border:none;outline:none;background:none;width:100%;font-size:15.7px;}
+        .editor-search svg {width:22px;height:22px;margin-left:9px;}
+        .editor-tablebox {margin-top:30px; background:#edf1fa; border-radius:9px; padding:10px 0;}
+        .editor-tablebox2 {margin-top:35px; background:#edf1fa; border-radius:9px; padding:10px 0;}
+        .editor-table {width:100%!important; border-collapse:collapse;}
+        .editor-table tr {border-bottom: 1px solid #e7e7ea;}
+        .editor-table td {padding:13px 18px; font-size:15.5px;}
+        .editor-table td:first-child {font-weight:700;}
+        .editor-table td:last-child {color:#0b3570d1;text-align:right;font-weight:600;}
+        .editor-table td span.seta {font-size:19px;margin-right:7px;vertical-align:middle;}
+        .editor-section h2 {font-size:2em;color:var(--main-blue);margin-top:41px;margin-bottom:12px;font-weight:800;}
+        /* Desenvolvedor page */
+        .dev-pg {padding-bottom:35px;}
+        .dev-header {display:flex; align-items: flex-start; gap:36px;}
+        .dev-img {min-width:290px;max-width:340px;}
+        .dev-img img {width:100%;border-radius:22px; box-shadow: 0 6px 33px #18386e13;}
+        .dev-habs-title {font-size:2em;font-weight:200;text-align:center;color: var(--dark-blue);margin:52px 0 21px 0;}
+        .dev-habs-row {
+            display:flex; gap:22px; justify-content:center; align-items:flex-start; margin-bottom:32px;
+        }
+        .dev-hab-box {
+            background:#edf1fa;border-radius:13px;padding:24px;min-width:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow: 0 3px 10px #143b7020;
+        }
+        .dev-hab-box svg, .dev-hab-box img {width:54px;height:54px;margin-bottom:13px;}
+        .dev-hab-box label {font-weight:200; font-size:20px; color:#0b3570; margin-top:7px;}
+        .dev-exp-title {font-size:1.6em;font-weight:800;text-align:center;color:var(--main-blue);margin:40px 0 15px 0;}
+        .dev-exp-row {display:flex;align-items:center;gap:28px;margin-bottom:32px;justify-content:space-between;}
+        .dev-exp-content {flex:2;}
+        .dev-exp-logo {flex:1;text-align:center;}
+        .dev-exp-logo img {max-width:200px;max-height:200px;}
+
+        header {
+      box-shadow: var(--shadow);
+      padding: 0 0 0 0;
+    }
+    .header-top {
+      max-width: 1270px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      gap: 30px;
+    }
+    .header-top img {
+      height: 48px;
+      margin-right: 32px;
+    }
+    .header-button {
+      background: var(--button-blue);
+      
+      padding: 10px 30px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .header-button:hover {
+      background: #1d56b2;
+    }
+
+
+        /* Responsivo */
+        @media (max-width: 1000px) {
+            .main-content { flex-direction: column; gap: 16px;}
+            .noticias, .faq { border: none !important; padding-left: 0 !important;}
+            .dev-header {flex-direction:column;}
+            .telas-row {flex-direction:column;}
+            .editor-section {padding: 0 2vw;}
+        }
+        @media (max-width: 650px) {
+            .header-top {flex-direction: column; align-items: start; padding: 9px 0 7px 8px;}
+            .hero-title {font-size: 40px;}
+            .grid-boxes {flex-direction: column; align-items: center; gap: 17px;}
+            .main-content {padding: 16px 4vw;}
+        
+            .site-section {font-size: 18px;}
+            .telas-row {gap:12px;}
+            .dev-habs-row {flex-direction:column;}
+            .dev-exp-row {flex-direction:column;gap:14px;}
+        }
+
+
+/* Contêiner de vídeo */
+.video-container {
+    display: flex;
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+    height: 130vh; /* Altura da tela inteira */
+}
+
+/* Caixa que contém o vídeo */
+.video-box {
+    position: relative;
+    width: 100%; /* Largura do vídeo vai ocupar 100% do seu contêiner */
+    max-width: 100%; /* Largura máxima do vídeo */
+    height: auto;
+    display: block; /* Garante que o conteúdo dentro da caixa vai se comportar bem */
+    margin: 0 auto; /* Centraliza a caixa horizontalmente */
+}
+
+/* Vídeo em si */
+.video {
+    width: 100%; /* Vídeo ocupará 100% da largura do contêiner */
+    height: auto; /* A altura será ajustada automaticamente */
+    display: block; /* Exibe o vídeo como um bloco */
+    object-fit: contain; /* Garante que o vídeo se ajuste dentro do contêiner sem distorção */
+}
+
+/* Thumbnail (imagem do vídeo) */
+.video-thumbnail {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+}
+
+/* Botão de play */
+.play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.play-btn svg {
+    fill: #fff;
+    width: 40px;
+    height: 40px;
+}
+
+.footer-copy {
+    text-align: center; /* Garante que o texto estará centralizado */
+    font-size: .96rem;
+    opacity: 0.84;
+    color: #d6daf6;
+    align-items: center;
+    justify-content: center;
+    margin-top: 19px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: #fff;
+    margin-right: 10px;
+}
+
+.search input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+    background: none;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+    .hidden-content {
+      display: none;
+    }
+    .hidden-content a {
+      color:#18376ecb;
+      text-decoration: none;
+      display: block;
+      margin: 2px 0;
+      padding-bottom: 10px; /* espaço entre texto e linha */
+      text-align: start;
+      border-bottom: 1px solid #051a3f47; /* linha fina e quase transparente */
+            font-weight:normal;
+    }
+    .hidden-content a:hover {
+      text-decoration: underline;
+    }
+
+.collapsible-row {
+    cursor: pointer;
+
+}
+
+.collapsible-row:hover {
+    background-color: #aebaca;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Header/top -->
+    <div class="header-top">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Logo_oficial_da_UFPR_%28fundo_branco%29.svg/2560px-Logo_oficial_da_UFPR_%28fundo_branco%29.svg.png" alt="UFPR logo">
+        <nav class="nav">
+            <a class="nav-link selected" href="#home" onclick="route('home')">Página Inicial</a>
+            <a class="nav-link" href="#editais" onclick="route('editais')">Editais e memorandos</a>
+            <a class="nav-link" href="#dev" onclick="route('dev')">Desenvolvedor</a>
+            <a class="nav-link" href="#manual" onclick="route('manual')">Manual do site</a>
+        </nav>
+
+        <div class="search">
+            <input type="text" placeholder="Pesquise no site..." />
+            <button class="search-button" aria-label="Buscar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+    </svg>
+</button>
+        </div>
+
+        <button class="btn-contact" onclick="route('contato')">Contate-nos &nbsp; ›</button>
+    </div>
+    
+    <!-- SPA Content Root -->
+    <div id="app"></div>
+    
+    <!-- Templates SPA -->
+    <template id="home">
+        <div class="hero">
+            <div class="hero-content">
+                <div class="hero-title">SEaDIP-UFPR</div>
+                <div class="hero-desc">Superintendência de Educação a Distância e Inovações Pedagógicas</div>
+                <div class="grid-boxes">
+                    <div class="box" onclick="route('')">
+                        <img src="https://img.icons8.com/ios-filled/100/books.png"/>
+                        <label>Biblioteca</label>
+                    </div>
+                    <div class="box" onclick="route('')">
+                        <img src="https://img.icons8.com/ios-filled/100/moodle.png"/>
+                        <label>Moodle</label>
+                    </div>
+                    <div class="box" onclick="route('')">
+                        <img src="https://img.icons8.com/ios-filled/100/open-book--v2.png"/>
+                        <label>Cursos</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="noticias">
+                <div class="noticias-title">Notícias Recentes</div>
+                <div class="noticias-list">
+                    <div class="noticia">
+                        <h4>SEADIP UFPR Lança Nova Plataforma de Ensino a Distância</h4>
+    <p>A Universidade Federal do Paraná (UFPR) anunciou o lançamento de uma nova plataforma de Ensino a Distância (EAD), que promete revolucionar a forma como os alunos interagem com os conteúdos acadêmicos. A plataforma conta com ferramentas avançadas de gamificação e inteligência artificial para personalizar o aprendizado.</p>
+                        <button class="btn-read">
+                            Ler mais
+                            <svg viewBox="0 0 12 12"><path d="M2 6h8M8 4l2 2-2 2" stroke="#fff" stroke-width="2" fill="none"/></svg>
+                        </button>
+                    </div>
+                    <div class="noticia">
+                        <h4>Estudo Inovador do SEADIP Identifica Tendências de Carreira no Mercado Digital</h4>
+    <p>Pesquisadores do SEADIP UFPR publicaram um estudo pioneiro sobre as principais tendências de carreira no mercado digital para os próximos 10 anos. O estudo, que envolve dados globais e locais, aponta áreas como inteligência artificial e desenvolvimento de software como os campos de maior crescimento.</p>
+                   
+                        <button class="btn-read">
+                            Ler mais
+                            <svg viewBox="0 0 12 12"><path d="M2 6h8M8 4l2 2-2 2" stroke="#fff" stroke-width="2" fill="none"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="faq">
+                <div class="faq-title">FAQ</div>
+                <div class="faq-item">
+                    <div class="faq-question">Como faço para acessar meu edital?</div>
+                    <div class="faq-answer">Acesse a aba ‘Editais’ e utilize a busca para encontrar o edital desejado.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Onde encontro o manual do sistema?</div>
+                    <div class="faq-answer">O manual está disponível na aba ‘Manual do Site’ ou pelo botão abaixo.</div>
+                </div>
+                <div class="faq-btns">
+                    <button class="btn-manual" onclick="route('manual')">Ir para o Manual</button>
+                </div>
+            </div>
+        </div>
+        <div class="site-section">
+            Conheça o site do SEaDIP-UFPR
+           
+        </div>
+
+  <!-- Contêiner para centralizar o vídeo -->
+<div class="video-container">
+    <div class="video-box">
+        <video class="video" controls>
+            <source src="videoseadip.mp4" type="video/mp4">
+            Seu navegador não suporta a tag de vídeo.
+        </video>
+    </div>
+</div>
+
+
+
+    </template>
+
+  <!-- testeeeee manuallll-->
+    
+<template id="manual">
+    <div class="breadcrumb">
+    <img src="https://img.icons8.com/ios-filled/50/home.png" class="bc-home" alt="home" onclick="route('home')">
+    <span onclick="route('home')">Home</span>
+    &rsaquo; <span>Manual do site</span>
+  </div>
+
+    <div class="main-pg" style="padding: 30px 7vw;">
+        <div class="manual-header-section" style="padding-bottom: 30px; text-align:start">
+        <div class="manual-header-title" style="margin-bottom:13px; color: var(--dark-blue); font-size: 2.5em; font-weight: 700;">Manual Completo do Site SEaDIP-UFPR</div>
+        <div style="color:#4d5082; font-size:1.1em; margin-top:18px; margin-bottom:13px; line-height: 1.6; margin-left: auto; margin-right: auto;">
+            Bem-vindo ao guia detalhado do Sistema para Editais e Atividades Discente de Inclusão e Permanência. 
+           <br>Explore todas as funcionalidades do SEaDIP-UFPR de forma eficiente e descomplicada. <br>
+            
+        </div>
+    </div>
+
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">1. Visão Geral e Navegação Inteligente</h2>
+            <div class="telas-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 50px; margin-top: 30px;">
+                <div class="side" style="flex: 1 1 55%; min-width: 300px; color: #4e5467; line-height: 1.8;">
+                    <h3 style="font-size: 1.5em; font-weight: 700; color: var(--main-blue); margin-bottom: 15px;">O que é o SEaDIP-UFPR?</h3>
+                    O SEaDIP-UFPR foi concebido como uma <strong style="color: var(--main-blue);">Single Page Application (SPA)</strong>, o que proporciona uma navegação <strong style="color: var(--main-blue);">fluida e ágil</strong>, sem a necessidade de recarregar a página a cada clique. Essa característica otimiza sua experiência, tornando-a mais rápida e intuitiva.
+                    <br><br>
+                    No topo de cada página, a <strong style="color: var(--main-blue);">barra de busca</strong> permite que você encontre informações específicas de forma eficiente. Além disso, o botão "<strong style="color: var(--main-blue);">Contate-nos</strong>" no cabeçalho oferece acesso direto ao nosso formulário de contato, garantindo que suas dúvidas sejam sempre prontamente atendidas.
+                    <br><br>
+                    Para aprimorar a acessibilidade, você pode utilizar a barra lateral para ativar recursos como o <strong style="color: var(--main-blue);">VLibras</strong> e o <strong style="color: var(--main-blue);">Alto Contraste</strong>. Também, o botão prático "<strong style="color: var(--main-blue);">Voltar ao Topo</strong>", visível ao rolar a página, facilita seu retorno ao início com apenas um clique.
+                </div>
+                <div class="tela-img" style="flex: 1 1 35%; min-width: 280px; text-align: center;">
+                    <img src="./home.png" alt="Tela Inicial do Sistema com Barra de Busca e Botões" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <p style="color:#666; font-size: 0.9em; margin-top: 15px; font-style: italic;">Interface Principal: Visão geral da barra de busca e acessos rápidos.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">2. Página Inicial (Home) - Seu Portal de Entrada</h2>
+            <div class="telas-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 50px; flex-direction: row-reverse; margin-top: 30px;">
+                <div class="side" style="flex: 1 1 55%; min-width: 300px; color: #4e5467; line-height: 1.8;">
+                    <h3 style="font-size: 1.5em; font-weight: 700; color: var(--main-blue); margin-bottom: 15px;">Explorando o Conteúdo Principal</h3>
+                    A <strong style="color: var(--main-blue);">Página Inicial</strong> é o coração do SEaDIP-UFPR, projetada com um layout claro e funcional. Ela oferece uma visão geral do sistema e facilita o acesso às seções mais relevantes.
+                    <br><br>
+                    Na parte superior, a <strong style="color: var(--main-blue);">Área de Destaque (Hero)</strong> comunica o propósito e os valores do SEaDIP-UFPR. Logo abaixo, as <strong style="color: var(--main-blue);">Caixas de Acesso Rápido</strong> servem como atalhos diretos para:
+                    <ul>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Biblioteca</strong>: Onde você pode acessar este manual completo.</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Moodle</strong>: Página central de <strong style="color: var(--main-blue);">Editais e Memorandos</strong>.</li>
+                        <li><strong style="color: var(--main-blue);">Cursos</strong>: A seção dedicada ao <strong style="color: var(--main-blue);">Desenvolvedor</strong> do sistema.</li>
+                    </ul>
+                    Na mesma página, você encontrará a seção de <strong style="color: var(--main-blue);">Notícias Recentes</strong> com atualizações importantes e o <strong style="color: var(--main-blue);">Vídeo Institucional</strong>, que oferece uma introdução visual sobre o SEaDIP-UFPR.
+                </div>
+                <div class="tela-img" style="flex: 1 1 35%; min-width: 280px; text-align: center;">
+                    <img src="./home1.png" alt="Seção Hero e Notícias da Página Inicial" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <p style="color:#666; font-size: 0.9em; margin-top: 15px; font-style: italic;">Hero Section e Notícias: Destaques e atualizações do sistema.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">3. Editais e Memorandos - Seu Acervo de Documentos</h2>
+            <div class="telas-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 50px; margin-top: 30px;">
+                <div class="side" style="flex: 1 1 55%; min-width: 300px; color: #4e5467; line-height: 1.8;">
+                    <h3 style="font-size: 1.5em; font-weight: 700; color: var(--main-blue); margin-bottom: 15px;">Organização e Acesso Rápido a Documentos Oficiais</h3>
+                    A seção <strong style="color: var(--main-blue);">Editais e Memorandos</strong> é o seu centralizador completo para todos os documentos oficiais emitidos pelo SEaDIP-UFPR. A organização por categorias foi pensada para facilitar sua navegação e busca.
+                    <br><br>
+                    Os documentos são apresentados em <strong style="color: var(--main-blue);">listas colapsáveis</strong>. Para visualizar os editais ou memorandos dentro de cada grupo, basta <strong style="color: var(--main-blue);">clicar na seta (›)</strong> ao lado do título da categoria (por exemplo, "Seleção de Bolsistas"). Essa funcionalidade mantém a interface limpa e organizada, revelando os links dos documentos apenas quando necessário.
+                    <br><br>
+                    Ao clicar em qualquer link de edital ou memorando, você será redirecionado <strong style="color: var(--main-blue);">diretamente ao conteúdo completo do documento</strong>, garantindo acesso rápido e desimpedido às informações.
+                </div>
+                <div class="tela-img" style="flex: 1 1 35%; min-width: 280px; text-align: center;">
+                    <img src="./edit.png" alt="Tela de Editais e Memorandos" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <p style="color:#666; font-size: 0.9em; margin-top: 15px; font-style: italic;">Tela de Editais e Memorandos: Central de documentos oficiais organizados por seções.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">4. Desenvolvedor - Conheça a Equipe</h2>
+            <div class="telas-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 50px; flex-direction: row-reverse; margin-top: 30px;">
+                <div class="side" style="flex: 1 1 55%; min-width: 300px; color: #4e5467; line-height: 1.8;">
+                    <h3 style="font-size: 1.5em; font-weight: 700; color: var(--main-blue); margin-bottom: 15px;">O Expertise por Trás do SEaDIP-UFPR</h3>
+                    A seção "<strong style="color: var(--main-blue);">Desenvolvedor</strong>" é dedicada a apresentar a profissional responsável pela concepção e manutenção do sistema: <strong style="color: var(--main-blue);">Victória Isabelle</strong>. Este é um espaço para conhecer o talento por trás da funcionalidade que você utiliza diariamente.
+                    <br><br>
+                    Aqui você pode explorar o <strong style="color: var(--main-blue);">mini-currículo</strong> de Victória, que detalha sua vasta experiência profissional em desenvolvimento de software, tanto em grandes empresas como a <strong style="color: var(--main-blue);">TOTVS</strong> quanto no próprio SEaDIP-UFPR. As informações abrangem suas principais responsabilidades, as <strong style="color: var(--main-blue);">tecnologias que domina</strong> (incluindo Vue.js, Laravel, MySQL, PHP e .NET Core) e seu compromisso em criar interfaces <strong style="color: var(--main-blue);">acessíveis e otimizadas</strong>.
+                    <br><br>
+                    A seção também destaca suas <strong style="color: var(--main-blue);">Habilidades e Certificações</strong>, como a de Scrum Master, e competências em Organização, Inovação e Linguagens de Programação, evidenciando o profissionalismo e as melhores práticas aplicadas no desenvolvimento deste sistema.
+                </div>
+                <div class="tela-img" style="flex: 1 1 35%; min-width: 280px; text-align: center;">
+                    <img src="./dev.png" alt="Tela do Desenvolvedor" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <p style="color:#666; font-size: 0.9em; margin-top: 15px; font-style: italic;">Tela do Desenvolvedor: Detalhes sobre a profissional que construiu o sistema.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">5. Contate-nos - Estamos Aqui para Ajudar</h2>
+            <div class="telas-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 50px; margin-top: 30px;">
+                <div class="side" style="flex: 1 1 55%; min-width: 300px; color: #4e5467; line-height: 1.8;">
+                    <h3 style="font-size: 1.5em; font-weight: 700; color: var(--main-blue); margin-bottom: 15px;">Envie Suas Dúvidas e Sugestões Facilmente</h3>
+                    Se você tem alguma dúvida, sugestão ou precisa de suporte, a seção "<strong style="color: var(--main-blue);">Contate-nos</strong>" é o canal direto para nossa equipe. O formulário foi estruturado para facilitar o envio de sua mensagem:
+                    <ul>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Informações Pessoais</strong>: Campos para sua identificação (Nome, Sobrenome, CPF, RG, E-mail). Preencha corretamente para que possamos retornar o contato.</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Informações do Curso</strong>: Detalhes sobre o curso de interesse, modalidade (Presencial, EAD, Híbrido) e campus, que auxiliam na compreensão de sua solicitação.</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Informações de Contato</strong>: Seu Celular, Telefone (opcional), Cidade e Estado para facilitar a comunicação.</li>
+                        <li><strong style="color: var(--main-blue);">Outros Comentários</strong>: Um campo de texto livre para você descrever detalhadamente sua dúvida, sugestão ou qualquer outra informação.</li>
+                    </ul>
+                    Após preencher, clique no botão "<strong style="color: var(--main-blue);">ENVIAR</strong>" para submeter sua mensagem. Nossos canais diretos de contato (e-mail, telefone e WhatsApp) também estão disponíveis no rodapé do site.
+                </div>
+                <div class="tela-img" style="flex: 1 1 35%; min-width: 280px; text-align: center;">
+                    <img src="./conta.png" alt="Tela de Contato com o Formulário" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <p style="color:#666; font-size: 0.9em; margin-top: 15px; font-style: italic;">Tela Contate-nos: Formulário otimizado para envio de mensagens.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="manual-section" style="margin-bottom: 70px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07); padding: 40px;">
+            <h2 style="font-size: 2em; color: var(--dark-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 2px solid var(--main-blue); padding-bottom: 10px; display: inline-block;">6. Rodapé (Footer) - Informações Essenciais</h2>
+            <div class="manual-descr" style="color:#4e5467; line-height: 1.8;">
+                O <strong style="color: var(--main-blue);">Rodapé</strong> está presente em todas as páginas do SEaDIP-UFPR e serve como um ponto de referência rápido para informações cruciais:
+                <ul>
+                    <li style="margin-bottom: 8px;">Uma breve descrição sobre o sistema (idealmente substituída por um texto oficial da UFPR).</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Links para nossas Redes Sociais</strong>: Conecte-se conosco no Facebook, LinkedIn e Instagram para acompanhar as novidades e interagir com nossa comunidade.</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: var(--main-blue);">Contatos Diretos</strong>: Nosso endereço físico (Praça Santos Andrade, 50), e-mail (seadip@ufpr.br), telefone (01712345678) e WhatsApp (01987654321) para comunicação rápida e eficaz.</li>
+                    <li><strong style="color: var(--main-blue);">Links Institucionais</strong>: Acesso direto ao portal de "<strong style="color: var(--main-blue);">Acesso à Informação</strong>" e ao portal oficial "<strong style="color: var(--main-blue);">Gov.br</strong>", garantindo transparência e conformidade com as diretrizes governamentais.</li>
+                </ul>
+                Estas informações garantem que você sempre tenha um canal de comunicação aberto com a equipe e acesso facilitado aos recursos institucionais importantes.
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 30px 0; background-color: #e0f2f7; border-radius: 12px; margin-top: 40px; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);">
+            <p style="color: var(--dark-blue); font-size: 1em; margin-bottom: 8px;">&copy; 2025 SEaDIP-UFPR | Todos os direitos reservados.</p>
+            <p style="color: #6c757d; font-size: 0.9em;">Desenvolvido com dedicação pela aluna Victória Isabelle Corbolin Monte na disciplina de IHC - TADS 2025/1.</p>
+            <p style="margin-top: 10px;"><a href="https://www.ufpr.br" target="_blank" style="color: var(--main-blue); text-decoration: none; font-weight: 600; transition: color 0.3s ease;">Visite o Site Oficial da UFPR</a></p>
+        </footer>
+    </div>
+</template>
+  
+
+ <!-- ==== testeeee ==== -->
+
+
+<template id="editais">
+  <div class="breadcrumb">
+    <img src="https://img.icons8.com/ios-filled/50/home.png" class="bc-home" alt="home" onclick="route('home')">
+    <span onclick="route('home')">Home</span>
+    &rsaquo; <span>Editais e memorandos</span>
+  </div>
+
+  <div class="main-pg editor-section" style="padding:20px 7vw 60px 7vw;">
+    <div class="editor-title" style="margin-bottom:13px; color: var(--main-blue);">Editais e memorandos</div>
+
+    <div style="color:#4d5082;font-size:16px;margin-top:18px;margin-bottom:13px;">
+      Abaixo estão listados os editais e memorandos emitidos pelo SEADIP/UFPR. Clique na seta para visualizar os documentos de cada grupo.
+    </div>
+
+    <!-- === EDITAIS === -->
+    <h2>Editais</h2>
+    <div class="editor-tablebox">
+      <table class="editor-table">
+
+        <!-- Bloco 1 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Seleção de Bolsistas - Projeto Alfa Digital</td>
+          <td>15/03/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 01/2025 – PIBID Alfa</a><br>
+            <a href="#">Edital 02/2025 – Monitoria Virtual</a><br>
+            <a href="#">Edital 03/2025 – Bolsa de Extensão Digital</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 2 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Apoio a Projetos Multicampi</td>
+          <td>27/02/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 04/2025 – Incentivo à Inovação Didática</a><br>
+            <a href="#">Edital 05/2025 – Fomento a Ações Intercampi</a><br>
+            <a href="#">Edital 06/2025 – Apoio a Disciplinas Integradoras</a><br>
+            <a href="#">Edital 07/2025 – Cursos de Capacitação</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 3 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Projetos de Pesquisa Tecnológica</td>
+          <td>10/02/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 08/2025 – Desenvolvimento de Software</a><br>
+            <a href="#">Edital 09/2025 – Inteligência Artificial aplicada</a><br>
+            <a href="#">Edital 10/2025 – Robótica Educacional</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 4 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Capacitação Docente</td>
+          <td>03/02/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 11/2025 – Curso de Metodologias Ativas</a><br>
+            <a href="#">Edital 12/2025 – Workshop de Tecnologias Educacionais</a><br>
+            <a href="#">Edital 13/2025 – Seminário de Avaliação</a><br>
+            <a href="#">Edital 14/2025 – Formação Continuada</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 5 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Apoio a Eventos Acadêmicos</td>
+          <td>22/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 15/2025 – Simpósio de Educação</a><br>
+            <a href="#">Edital 16/2025 – Congresso Multidisciplinar</a><br>
+            <a href="#">Edital 17/2025 – Feira de Inovação</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 6 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Projetos de Inclusão Digital</td>
+          <td>15/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 18/2025 – Inclusão de Alunos</a><br>
+            <a href="#">Edital 19/2025 – Acessibilidade em Ambientes Virtuais</a><br>
+            <a href="#">Edital 20/2025 – Capacitação para Deficientes</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 7 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Programas de Estágio</td>
+          <td>08/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 21/2025 – Estágio em Tecnologia da Informação</a><br>
+            <a href="#">Edital 22/2025 – Estágio em Comunicação</a><br>
+            <a href="#">Edital 23/2025 – Estágio em Administração</a><br>
+            <a href="#">Edital 24/2025 – Estágio Remoto</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 8 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Bolsas para Pesquisa e Extensão</td>
+          <td>02/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Edital 25/2025 – Bolsa para Pesquisadores</a><br>
+            <a href="#">Edital 26/2025 – Bolsa para Extensão</a><br>
+            <a href="#">Edital 27/2025 – Bolsa para Iniciação Científica</a>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+    <!-- === MEMORANDOS === -->
+    <h2 style="margin-top: 61px;">Memorandos</h2>
+    <div class="editor-tablebox2">
+      <table class="editor-table">
+
+        <!-- Bloco 1 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Avaliação Diagnóstica Institucional</td>
+          <td>06/03/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 05/2025 – Etapas do Processo Avaliativo</a><br>
+            <a href="#">Memorando 06/2025 – Cronograma por Campus</a><br>
+            <a href="#">Memorando 07/2025 – Ferramentas Recomendadas</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 2 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Reformulação de Planos Pedagógicos</td>
+          <td>12/02/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 08/2025 – Atualização obrigatória</a><br>
+            <a href="#">Memorando 09/2025 – Inclusão de Competências Digitais</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 3 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Normas para Uso de Laboratórios</td>
+          <td>05/02/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 10/2025 – Reservas e Agendamentos</a><br>
+            <a href="#">Memorando 11/2025 – Procedimentos de Segurança</a><br>
+            <a href="#">Memorando 12/2025 – Limpeza e Manutenção</a><br>
+            <a href="#">Memorando 13/2025 – Responsabilidades dos Usuários</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 4 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Procedimentos Administrativos</td>
+          <td>30/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 14/2025 – Relatórios Mensais</a><br>
+            <a href="#">Memorando 15/2025 – Aprovação de Documentos</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 5 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Protocolos de Atendimento</td>
+          <td>18/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 16/2025 – Atendimento ao Público</a><br>
+            <a href="#">Memorando 17/2025 – Atendimento Remoto</a><br>
+            <a href="#">Memorando 18/2025 – Registro de Ocorrências</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 6 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Comunicação Interna</td>
+          <td>10/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 19/2025 – Diretrizes de Comunicação</a><br>
+            <a href="#">Memorando 20/2025 – Uso de E-mails Oficiais</a><br>
+            <a href="#">Memorando 21/2025 – Canal de Sugestões</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 7 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Controle de Frequência</td>
+          <td>03/01/2025</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 22/2025 – Registro Manual</a><br>
+            <a href="#">Memorando 23/2025 – Sistema Digital</a><br>
+            <a href="#">Memorando 24/2025 – Procedimentos para Ausências</a>
+          </td>
+        </tr>
+
+        <!-- Bloco 8 -->
+        <tr class="collapsible-row">
+          <td><span class="seta">&#8250;</span> Segurança da Informação</td>
+          <td>28/12/2024</td>
+        </tr>
+        <tr class="hidden-content">
+          <td colspan="2">
+            <a href="#">Memorando 25/2024 – Políticas de Senhas</a><br>
+            <a href="#">Memorando 26/2024 – Acesso a Sistemas</a><br>
+            <a href="#">Memorando 27/2024 – Backup e Recuperação</a><br>
+            <a href="#">Memorando 28/2024 – Treinamento Obrigatório</a>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</template>
+    </template>
+
+  <!-- ==== testeeee ==== -->
+
+
+
+
+<template id="dev">
+  <div class="breadcrumb">
+    <img src="https://img.icons8.com/ios-filled/50/home.png" class="bc-home" alt="home" onclick="route('home')">
+    <span onclick="route('home')">Home</span>
+    &rsaquo; <span>Desenvolvedor</span>
+  </div>
+
+  <div class="main-pg dev-pg" style="padding: 20px 200px 60px 200px; box-sizing: border-box;">
+    <div class="dev-header" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+      <div style="flex: 1 1 70%; min-width: 300px;">
+        <div class="dev-title" style="margin-bottom: 17px; color: var(--main-blue); font-weight: 700; font-size: 1.5rem;">
+          Victória Isabelle - Atualizado em 05/25
+        </div>
+        <div style="color: #072455; font-size: 16px; line-height: 1.5;">
+          Engenheira de software atuando no SEADIP/UFPR, com mais de 6 anos de experiência em desenvolvimento de sistemas web voltados para ambientes acadêmicos e administrativos. Graduada em Sistemas de Informação pela UFPR e pós-graduanda em Engenharia de Dados, possui amplo domínio de tecnologias como JavaScript, Vue, PHP e Laravel. Tem como foco principal a criação de interfaces acessíveis, responsivas e otimizadas para performance. Além disso, participa ativamente de projetos de inovação institucional, propondo soluções para gestão de documentos, editais, controle de fluxo interno e automações administrativas. Vitória também é entusiasta de metodologias ágeis e já atuou como facilitadora em diversos projetos interdisciplinares.
+        </div>
+      </div>
+      <div class="dev-img" style="flex: 1 1 250px; text-align: center; min-width: 250px;">
+        <img src="https://wordpress-cms-ead-prod-assets.quero.space/uploads/2024/07/desenvolvedor-de-software-capa.jpg" alt="Foto desenvolvedora - Vitória Isabelle" style="max-width: 100%; border-radius: 6px; height: auto;">
+      </div>
+    </div>
+
+    <div style="margin: 52px 0 21px 0; text-align:center; color: var(--main-blue); font-weight: 800; font-size: 2em;">
+      Habilidades e certificações
+    </div>
+
+    <div style="display:flex; gap:22px; justify-content:center; align-items: stretch; margin-bottom: 32px;">
+      <div style="background:#edf1fa; border-radius:13px; padding:24px; min-width:170px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; box-shadow: 0 3px 10px #143b7020; height:180px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0b3570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="54" height="54" style="margin-bottom:13px; flex-shrink:0;">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <label style="font-weight:800; font-size:20px; color: var(--main-blue); margin-top:7px; text-align:center;">
+          Certificação<br>Scrum Master
+        </label>
+      </div>
+
+      <div style="background:#edf1fa; border-radius:13px; padding:24px; min-width:170px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; box-shadow: 0 3px 10px #143b7020; height:180px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0b3570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="54" height="54" style="margin-bottom:13px; flex-shrink:0;">
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <circle cx="3" cy="6" r="2" />
+          <circle cx="3" cy="12" r="2" />
+          <circle cx="3" cy="18" r="2" />
+        </svg>
+        <label style="font-weight:800; font-size:20px; color: var(--main-blue); margin-top:7px; text-align:center;">
+          Organização
+        </label>
+      </div>
+
+      <div style="background:#edf1fa; border-radius:13px; padding:24px; min-width:170px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; box-shadow: 0 3px 10px #143b7020; height:180px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0b3570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="54" height="54" style="margin-bottom:13px; flex-shrink:0;">
+          <path d="M9 18h6" />
+          <path d="M10 22h4" />
+          <path d="M12 2a7 7 0 0 1 7 7c0 3-3 5-3 5H8s-3-2-3-5a7 7 0 0 1 7-7z" />
+        </svg>
+        <label style="font-weight:800; font-size:20px; color: var(--main-blue); margin-top:7px; text-align:center;">
+          Inovação
+        </label>
+      </div>
+
+      <div style="background:#edf1fa; border-radius:13px; padding:24px; min-width:170px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; box-shadow: 0 3px 10px #143b7020; height:180px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0b3570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="54" height="54" style="margin-bottom:13px; flex-shrink:0;">
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </svg>
+        <label style="font-weight:800; font-size:20px; color: var(--main-blue); margin-top:7px; text-align:center;">
+          Linguagens de<br>programação
+        </label>
+      </div>
+    </div>
+
+    <div class="dev-exp-title" style="margin-top: 50px; margin-bottom: 25px; font-size: 1.6em; font-weight: 800; text-align: center; color: var(--main-blue);">
+      Experiências
+    </div>
+
+    <div class="dev-exp-row" style="display: flex; flex-wrap: wrap; margin-bottom: 30px; align-items: center; gap: 20px;">
+      <div class="dev-exp-content" style="flex: 1 1 60%; min-width: 300px;">
+        <div style="font-weight: 800; font-size: 25px; color: var(--main-blue); margin-bottom: 6px;">TOTVS</div>
+        <div style="color: #617096; line-height: 1.5;">
+          Atuou como desenvolvedora backend na TOTVS por 2 anos, integrando times responsáveis por sistemas ERP corporativos. Desenvolveu módulos personalizados para grandes clientes do setor público, focando em escalabilidade e integração com plataformas financeiras. Liderou a migração de serviços SOAP para RESTful APIs utilizando PHP e .NET Core, e trabalhou com banco de dados Oracle e PostgreSQL. Participou da squad de segurança da informação, revisando práticas de segurança e realizando testes de vulnerabilidades em sistemas legados.
+        </div>
+      </div>
+      <div class="dev-exp-logo" style="flex: 0 0 150px; display: flex; align-items: center; justify-content: center; min-width: 250px;">
+        <img src="https://logodownload.org/wp-content/uploads/2019/12/totvs-logo.png" alt="Logo TOTVS" style="height: auto; width: auto;">
+      </div>
+    </div>
+
+    <div class="dev-exp-row" style="display: flex; flex-wrap: wrap; margin-bottom: 30px; align-items: center; gap: 20px;">
+      <div class="dev-exp-content" style="flex: 1 1 60%; min-width: 300px;">
+        <div style="font-weight: 800; font-size: 25px; color: var(--main-blue); margin-bottom: 6px;">SEADIP – UFPR</div>
+        <div style="color: #617096; line-height: 1.5;">
+          Desde 2023 atua como desenvolvedora front-end no SEADIP/UFPR, sendo responsável por plataformas internas de gerenciamento de documentos, memorandos e editais. Desenvolveu o sistema de tramitação digital da Pró-Reitoria, integrando autenticação institucional via SSO e otimizando o tempo de resposta das requisições em mais de 60%. Trabalha com tecnologias como Vue.js, Laravel e MySQL. Também atua como referência em acessibilidade digital dentro da equipe, promovendo melhorias com base nas diretrizes WCAG.
+        </div>
+      </div>
+      <div class="dev-exp-logo" style="flex: 0 0 250px; display: flex; align-items: center; justify-content: center; min-width: 250px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Logo_oficial_da_UFPR_%28fundo_branco%29.svg/2560px-Logo_oficial_da_UFPR_%28fundo_branco%29.svg.png" alt="Logo UFPR" style="height: 150px; width: auto;">
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+
+    
+
+ <!-- ==== testeeee ==== -->
+
+<template id="contato">
+   <div class="breadcrumb">
+    <img src="https://img.icons8.com/ios-filled/50/home.png" class="bc-home" alt="home" onclick="route('home')">
+    <span onclick="route('home')">Home</span>
+    &rsaquo; <span>Contate-nos</span>
+  </div>
+
+  <main class="container" style="padding-top: 30px; padding-left: 200px; padding-right: 200px; padding-bottom: 50px;">
+    <h1 style="text-align: center; color: var(--main-blue); font-size: 36px; margin-bottom: 20px;">Contate-nos</h1>
+    <p style="text-align: center; font-size: 16px; color: #333;">Estamos aqui para ajudar. Fique à vontade para entrar em contato conosco.</p>
+
+    <form action="#" method="POST" style="background-color: #f8f8f8; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); margin-top: 30px;">
+      <!-- Informações Pessoais -->
+      <h2 style="font-size: 24px; color: #072455; margin-bottom: 20px;">Informações Pessoais</h2>
+      <div class="form-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        
+        <div class="form-group">
+          <label for="nome" style="font-weight: 600;">Nome *</label>
+          <input type="text" id="nome" name="nome" required placeholder="Digite seu nome" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="sobrenome" style="font-weight: 600;">Sobrenome *</label>
+          <input type="text" id="sobrenome" name="sobrenome" required placeholder="Digite seu sobrenome" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="cpf" style="font-weight: 600;">CPF *</label>
+          <input type="text" id="cpf" name="cpf" required placeholder="Digite seu CPF" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="CPF no formato: xxx.xxx.xxx-xx" oninput="mascaraCPF(this)" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="rg" style="font-weight: 600;">RG *</label>
+          <input type="text" id="rg" name="rg" required placeholder="Digite seu RG" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="email" style="font-weight: 600;">E-mail *</label>
+          <input type="email" id="email" name="email" required placeholder="Digite seu e-mail" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmar_email" style="font-weight: 600;">Confirmar E-mail *</label>
+          <input type="email" id="confirmar_email" name="confirmar_email" required placeholder="Confirme seu e-mail" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+      </div>
+
+      <!-- Informações do Curso -->
+      <h2 style="font-size: 24px; color: #072455; margin-top: 40px; margin-bottom: 20px;">Informações do Curso</h2>
+      <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        
+        <div class="form-group">
+          <label for="curso_desejado" style="font-weight: 600;">Curso Desejado *</label>
+          <input type="text" id="curso_desejado" name="curso_desejado" required placeholder="Qual curso você deseja?" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="modalidade" style="font-weight: 600;">Modalidade *</label>
+          <select id="modalidade" name="modalidade" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+            <option value="">Selecione</option>
+            <option value="presencial">Presencial</option>
+            <option value="ead">EAD</option>
+            <option value="hibrido">Híbrido</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="campus" style="font-weight: 600;">Campus *</label>
+          <select id="campus" name="campus" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+            <option value="">Selecione</option>
+            <option value="curitiba">Curitiba</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data_inicio" style="font-weight: 600;">Data de Início *</label>
+          <input type="date" id="data_inicio" name="data_inicio" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+      </div>
+
+      <!-- Informações de Contato -->
+      <h2 style="font-size: 24px; color: #072455; margin-top: 40px; margin-bottom: 20px;">Informações de Contato</h2>
+      <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        
+        <div class="form-group">
+          <label for="celular" style="font-weight: 600;">Celular *</label>
+          <input type="tel" id="celular" name="celular" required placeholder="(XX) XXXXX-XXXX" pattern="\(\d{2}\) \d{5}-\d{4}" title="Formato: (XX) XXXXX-XXXX" oninput="mascaraCelular(this)" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="telefone" style="font-weight: 600;">Telefone</label>
+          <input type="tel" id="telefone" name="telefone" pattern="\(\d{2}\) \d{4}-\d{4}" title="Formato: (XX) XXXX-XXXX" oninput="mascaraTelefone(this)" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="cidade" style="font-weight: 600;">Cidade *</label>
+          <input type="text" id="cidade" name="cidade" required placeholder="Sua cidade" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+        </div>
+
+        <div class="form-group">
+          <label for="estado" style="font-weight: 600;">Estado *</label>
+          <select id="estado" name="estado" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;">
+            <option value="">Selecione</option>
+            <option value="pr">Paraná</option>
+            <option value="sc">Santa Catarina</option>
+            <option value="rs">Rio Grande do Sul</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Outros Comentários -->
+      <div class="form-group" style="margin-top: 40px; margin-bottom: 20px;">
+        <label for="outros_comentarios" style="font-weight: 600;">Outros Comentários</label>
+        <textarea id="outros_comentarios" name="outros_comentarios" rows="5" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;"></textarea>
+      </div>
+
+      <!-- Botão de Envio -->
+      <button type="submit" class="button primary" style="width: 100%; padding: 14px 20px; background-color: var(--main-blue); color: white; font-size: 18px; border-radius: 8px; border: none; cursor: pointer;">
+        ENVIAR
+      </button>
+    </form>
+  </main>
+</template>
+
+
+
+
+ <!-- TESTEEEEEEEEEEEEEEEEEE -->
+
+
+
+
+
+ <!---->
+
+    </template>
+
+    <!-- Sidebar acessibilidade, botão "Topo" etc, conforme anterior -->
+    <div class="sidebar-icons">
+        <button title="VLibras">
+            <img src="https://img.icons8.com/ios-filled/50/hand-right.png" alt="VLibras">
+        </button>
+        <button title="Alto contraste">
+            <img src="https://img.icons8.com/ios-filled/50/contrast.png" alt="Contraste">
+        </button>
+    </div>
+    <button class="go-top" style="display:none;" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    </button>
+
+    <!-- Rodapé -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-desc">
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna.
+        <div class="footer-social" style="margin-top:17px">
+          <a href="#"><img src="https://img.icons8.com/ios-filled/50/FFFFFF/facebook-circled.png" alt="Facebook"></a>
+          <a href="#"><img src="https://img.icons8.com/ios-filled/50/FFFFFF/linkedin-circled.png" alt="Linkedin"></a>
+          <a href="#"><img src="https://img.icons8.com/ios-filled/50/FFFFFF/instagram-new.png" alt="Instagram"></a>
+        </div>
+      </div>
+      <div class="footer-contacts">
+        <div class="contato-title">Contatos</div>
+        <ul class="contato-list">
+          <li><img src="https://img.icons8.com/ios-filled/50/FFFFFF/marker.png" height="17" alt="Local"/> Praça Santos Andrade, 50</li>
+          <li><img src="https://img.icons8.com/ios-filled/50/FFFFFF/new-post.png" height="17" alt="Email"/> seadip@ufpr.br</li>
+          <li><img src="https://img.icons8.com/ios-filled/50/FFFFFF/phone.png" height="17" alt="Telefone"/> 01712345678</li>
+          <li><img src="https://img.icons8.com/ios-filled/50/FFFFFF/whatsapp.png" height="17" alt="Whatsapp"/> 01987654321</li>
+        </ul>
+      </div>
+      
+
+      <div style="flex: 1; display: flex; flex-direction:row; justify-content: flex-start; align-items:center; height: 100%; padding: 0px 0;">
+    <div class="footer-info-access" style="margin-bottom: 17px; display: flex; justify-content: center; align-items: center;">
+        <a href="#"><img src="./informacao.png" alt="Acesso à Informação" style="max-width: 200px; height: auto; margin: 0 10px;"></a>
+    </div>
+    <div class="footer-logo-brasil" style="margin-bottom: 17px; display: flex; justify-content: center; align-items: center;">
+        <a href="#"><img src="./gov.png" alt="Logo Brasil" style="max-width: 200px; height: auto; margin: 0 10px;"></a>
+    </div>
+
+</div>
+
+
+    </div>
+        <div class="footer-copy">
+            &copy; 2024 UFPR. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+    const TEMPLATES = {
+        home: document.getElementById('home').innerHTML,
+        manual: document.getElementById('manual').innerHTML,
+        editais: document.getElementById('editais').innerHTML,
+        dev: document.getElementById('dev').innerHTML,
+        contato: document.getElementById('contato').innerHTML,
+    };
+    function setActiveNav(route){
+        document.querySelectorAll('.nav-link').forEach(link=>{
+            link.classList.remove('selected');
+            if((route==='home' && link.textContent.match(/inicial/i)) ||
+               (route==='manual' && link.textContent.match(/Manual/i)) ||
+               (route==='editais' && link.textContent.match(/Editais/i)) ||
+               (route==='dev' && link.textContent.match(/Desenvolvedor/i))) {
+                link.classList.add('selected');
+            }
+        })
+    }
+    function route(page) {
+        window.location.hash = '#' + page;
+    }
+    function render(page) {
+        let app = document.getElementById('app');
+        setActiveNav(page);
+        app.innerHTML = TEMPLATES[page] || TEMPLATES['home'];
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+    window.addEventListener('hashchange', ()=>{
+        let hash = window.location.hash.replace('#','');
+        render(hash||'home');
+    });
+    (()=>{ // onLoad
+        let hash = window.location.hash.replace('#','');
+        render(hash||'home');
+    })();
+    // Botão Voltar ao topo
+    window.addEventListener('scroll', () => {
+        document.querySelectorAll('.go-top').forEach(e=>{
+            e.style.display = (window.scrollY>200)?'block':'none';
+        });
+    });
+
+function playVideo() {
+        var video = document.querySelector('.video');
+        var playButton = document.querySelector('.play-btn');
+        var thumbnail = document.querySelector('.video-thumbnail');
+        
+        // Esconder a imagem e o botão de play
+        thumbnail.style.display = 'none';
+        playButton.style.display = 'none';
+
+        // Mostrar o vídeo e iniciar a reprodução
+        video.style.display = 'block';
+        video.play();
+    }
+    
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        const observer = new MutationObserver(() => {
+            const rows = document.querySelectorAll(".collapsible-row");
+            rows.forEach(row => {
+                if (!row.dataset.binded) {
+                    row.dataset.binded = "true";
+                    row.addEventListener("click", () => {
+                        const nextRow = row.nextElementSibling;
+                        const seta = row.querySelector(".seta");
+                        if (nextRow && nextRow.classList.contains("hidden-content")) {
+                            const visible = nextRow.style.display === "table-row";
+                            nextRow.style.display = visible ? "none" : "table-row";
+                            seta.innerHTML = visible ? "&#8250;" : "&#8722;";
+                        }
+                    });
+                }
+            });
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+    
+
+    function mascaraCPF(campo) {
+      campo.value = campo.value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    }
+
+    function mascaraCelular(campo) {
+      campo.value = campo.value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    }
+
+    function mascaraTelefone(campo) {
+      campo.value = campo.value.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    }
+ 
+    </script>
+</body>
+</html>
